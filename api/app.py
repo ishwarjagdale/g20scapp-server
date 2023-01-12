@@ -7,9 +7,11 @@ api = Blueprint('api', __name__, url_prefix='/api')
 def get_monument(monument, code, detailed=False):
     images = []
     translation = MonumentTranslations.query.filter_by(monument_id=monument.monument_id, language_code=code).first()
+    if not translation:
+        translation = MonumentTranslations.query.filter_by(monument_id=monument.monument_id, language_code='en').first()
     temp = MonumentImages.query.filter_by(monument_id=monument.monument_id)
-    if detailed:
 
+    if detailed:
         images.extend(list(map(lambda x: x.image, temp.all())))
     else:
         temp = temp.first()
@@ -72,4 +74,16 @@ def get_category(language, category):
 def get_monument_view(language, monument_id):
     mon = Monuments.query.filter_by(monument_id=monument_id).first()
     response = get_monument(monument=mon, code=language, detailed=bool(request.args.get('detailed')))
+    return jsonify({"status": 200, "response": response})
+
+
+@api.route('/<language>/monuments', methods=["POST"])
+def get_monuments(language):
+    response = []
+    print(request.json)
+    for monID in request.json:
+        mon = Monuments.query.filter_by(monument_id=monID).first()
+        if mon:
+            response.append(get_monument(monument=mon, code=language, detailed=False))
+
     return jsonify({"status": 200, "response": response})

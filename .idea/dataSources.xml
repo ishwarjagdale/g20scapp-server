@@ -9,11 +9,11 @@
       <jdbc-url>jdbc:sqlserver://scapp-server.database.windows.net:1433;database=G20Scapp;user=ishwarjagdale@scapp-server;password=GsbBPPshV83xmkT;encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30;</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
-    <data-source source="LOCAL" name="d70oqtafiofkov@ec2-35-170-21-76.compute-1.amazonaws.com" uuid="3e792f4f-ceed-4750-adf8-e8de0319b0a7">
+    <data-source source="LOCAL" name="de3sn07nq1ke2q@ec2-54-173-77-184.compute-1.amazonaws.com" uuid="adfe3d50-c27d-49da-915e-00f19bfb7fb8">
       <driver-ref>postgresql</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.postgresql.Driver</jdbc-driver>
-      <jdbc-url>jdbc:postgresql://ec2-35-170-21-76.compute-1.amazonaws.com:5432/d70oqtafiofkov</jdbc-url>
+      <jdbc-url>jdbc:postgresql://ec2-54-173-77-184.compute-1.amazonaws.com:5432/de3sn07nq1ke2q</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
   </component>

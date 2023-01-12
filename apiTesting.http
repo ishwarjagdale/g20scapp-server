@@ -1,9 +1,10 @@
 # POST localhost:5000/auth/signup
-POST localhost:5000/admin/new
+POST https://g20scapp-server.herokuapp.com/admin/new
 Content-Type: application/json
 
 {
     "name": "Shahganj Clocktower",
+  "category": "Historical Places",
     "images": [
         "6V8ARqOBb2yttsf6D6X0AWUVFf1/bVwD6wEH1v9fbQ0A60hI3N9V0QF1T9P20yiSJVyO2pcQJNLWslyrMCdK4oCQvH5hezn+X/DVbQE2LmpwN9z6k+up2gWVPzzYWxO/sx39t/+GjawJ9Nz0436jLv27kW1XtJssqfnkOBkcyPXIqT+pH+ejaFkmLxAA8mVgDvvf+fe2jaiT//Z"
     ],
@@ -48,7 +49,7 @@ Content-Type: application/json
 }
 
 ###
-POST http://localhost:5000/auth/login
+POST https://g20scapp-server.herokuapp.com/auth/login
 Content-Type: application/json
 
 {
@@ -58,9 +59,9 @@ Content-Type: application/json
 
 
 ###
-GET localhost:5000/api/populars/en
+GET https://g20scapp-server.herokuapp.com/api/populars/en
 
 
 ###
-GET localhost:5000/api/en/categories
+GET https://g20scapp-server.herokuapp.com/api/en/categories
 
