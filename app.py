@@ -1,3 +1,5 @@
+import os
+
 from flask import Flask
 from database import db
 from auth import auth, login_manager
@@ -26,4 +28,4 @@ def hello_world():  # put application's code here
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(host='0.0.0.0', port=os.environ.get("PORT") or 5000)
