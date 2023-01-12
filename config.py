@@ -1,7 +1,7 @@
 import datetime
 from os import environ
 FLASK_ENV = environ.get("FLASK_ENV")
-SQLALCHEMY_DATABASE_URI = 'postgresql://scapp:password@localhost:5432/scapp'
+SQLALCHEMY_DATABASE_URI = environ.get("DATABASE_URI") or 'postgresql://scapp:password@localhost:5432/scapp'
 FLASK_DEBUG = environ.get("FLASK_DEBUG") or False
 SECRET_KEY = environ.get("SECRET_KEY")
 SESSION_COOKIE_SAMESITE = "None"
