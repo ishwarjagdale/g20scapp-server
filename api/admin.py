@@ -1,10 +1,11 @@
 import datetime
 import hashlib
+import json
 
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, make_response
 from flask_login import login_required
 from api.app import get_monument
-
+from api.fire_storage import upload
 from database import Monuments, MonumentTranslations, MonumentImages, db
 
 admin = Blueprint('admin', __name__, url_prefix='/admin')
@@ -13,7 +14,8 @@ admin = Blueprint('admin', __name__, url_prefix='/admin')
 @admin.route('/new', methods=["POST"])
 @login_required
 def new_monument():
-    payload = request.json
+    payload = request.form.to_dict()
+    payload['descriptions'] = json.loads(payload['descriptions'])
 
     name = payload['name'].strip()
     monument_id = name.replace(' ', '-') + '-' + str(hashlib.sha256(
@@ -31,11 +33,6 @@ def new_monument():
     db.session.add(monument)
     db.session.commit()
 
-    for image in payload['images']:
-        img = MonumentImages(monument_id=monument.monument_id, image=image)
-        db.session.add(img)
-    db.session.commit()
-
     for desc in payload['descriptions']:
         translation = MonumentTranslations(
             monument_id=monument.monument_id,
@@ -45,6 +42,11 @@ def new_monument():
             audio=payload['descriptions'][desc].get('audio', None)
         )
         db.session.add(translation)
+    db.session.commit()
+
+    for image in upload(request.files.to_dict()):
+        img = MonumentImages(monument_id=monument.monument_id, image=image)
+        db.session.add(img)
     db.session.commit()
 
     return jsonify({"monument_id": monument.monument_id})

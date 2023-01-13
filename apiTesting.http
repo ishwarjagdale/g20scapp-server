@@ -49,12 +49,13 @@ Content-Type: application/json
 }
 
 ###
-POST https://g20scapp-server.herokuapp.com/auth/login
+POST https://g20scapp-server.herokuapp.com/auth/signup
 Content-Type: application/json
 
 {
-  "email": "ishwarrules@gmail.com",
-  "password": "ishwar@01"
+  "name": "admin",
+  "email": "admin",
+  "password": "awoidhaowdoaw"
 }
 
 

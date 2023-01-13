@@ -39,24 +39,24 @@ def login():
     return jsonify({"message": "invalid or missing parameters"}), 400
 
 
-@auth.route('/signup', methods=["POST"])
-def signup():
-    name = request.json.get('name', None)
-    email = request.json.get('email', None)
-    password = request.json.get('password', None)
-
-    if name and email and password:
-        user = Users.get_user(email=email)
-        if not user:
-            d_now = datetime.datetime.now(datetime.timezone.utc).timestamp()
-            user = Users(name=name, email_addr=email, date_created=d_now, password=hashlib.sha256(
-                bytes(str(d_now).replace('.', password), encoding='utf-8')
-            ).hexdigest(), authenticate=True)
-            db.session.add(user)
-            db.session.commit()
-            return jsonify(user.to_dict())
-        return jsonify({"message": "user exists"}), 400
-    return jsonify({"message": "invalid or missing parameters"}), 400
+# @auth.route('/signup', methods=["POST"])
+# def signup():
+#     name = request.json.get('name', None)
+#     email = request.json.get('email', None)
+#     password = request.json.get('password', None)
+#
+#     if name and email and password:
+#         user = Users.get_user(email=email)
+#         if not user:
+#             d_now = datetime.datetime.now(datetime.timezone.utc).timestamp()
+#             user = Users(name=name, email_addr=email, date_created=d_now, password=hashlib.sha256(
+#                 bytes(str(d_now).replace('.', password), encoding='utf-8')
+#             ).hexdigest(), authenticate=True)
+#             db.session.add(user)
+#             db.session.commit()
+#             return jsonify(user.to_dict())
+#         return jsonify({"message": "user exists"}), 400
+#     return jsonify({"message": "invalid or missing parameters"}), 400
 
 
 @auth.route('/logout', methods=["GET"])
