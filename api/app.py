@@ -18,12 +18,18 @@ def get_monument(monument, code, detailed=False):
         if temp:
             images.append(temp.image)
 
+    languages = list(map(lambda x: x[0],
+                         MonumentTranslations.query.with_entities(MonumentTranslations.language_code
+                                                                  ).filter_by(monument_id=monument.monument_id
+                                                                              ).distinct()))
+
     resp = {
         "id": monument.monument_id,
         "name": translation.name if translation else monument.name,
         "images": images,
         "long": monument.long,
         "lat": monument.lat,
+        "languages": languages
     }
 
     if detailed:
