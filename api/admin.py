@@ -14,8 +14,10 @@ admin = Blueprint('admin', __name__, url_prefix='/admin')
 @admin.route('/new', methods=["POST"])
 @login_required
 def new_monument():
+    print(request.form)
     payload = request.form.to_dict()
-    payload['descriptions'] = json.loads(payload['descriptions'])
+    for k in payload:
+        payload[k] = json.loads(payload[k])
 
     name = payload['name'].strip()
     monument_id = name.replace(' ', '-') + '-' + str(hashlib.sha256(
