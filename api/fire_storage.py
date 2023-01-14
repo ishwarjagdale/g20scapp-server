@@ -35,3 +35,7 @@ def upload(file):
     blob.upload_from_file(file_obj=file, content_type=file.content_type)
     blob.make_public()
     return blob.public_url
+
+
+def deleteBlob():
+    bucket = storage.bucket('g20scapp.appspot.com')
