@@ -5,7 +5,7 @@ import json
 from flask import Blueprint, request, jsonify, make_response
 from flask_login import login_required
 from api.app import get_monument
-from api.fire_storage import upload
+from api.fire_storage import upload, process_image
 from database import Monuments, MonumentTranslations, MonumentImages, db
 
 admin = Blueprint('admin', __name__, url_prefix='/admin')
@@ -15,6 +15,7 @@ admin = Blueprint('admin', __name__, url_prefix='/admin')
 @login_required
 def new_monument():
     print(request.form)
+    print(request.files)
     payload = request.form.to_dict()
     for k in payload:
         payload[k] = json.loads(payload[k])
@@ -36,19 +37,25 @@ def new_monument():
     db.session.commit()
 
     for desc in payload['descriptions']:
+        audio = None
+        if f'audio-{desc}' in request.files:
+            audio = upload(request.files[f'audio-{desc}'])
+
         translation = MonumentTranslations(
             monument_id=monument.monument_id,
             language_code=desc,
             name=payload['descriptions'][desc]['name'],
             description=payload['descriptions'][desc]['description'],
-            audio=payload['descriptions'][desc].get('audio', None)
+            audio=audio
         )
         db.session.add(translation)
     db.session.commit()
 
-    for image in upload(request.files.to_dict()):
-        img = MonumentImages(monument_id=monument.monument_id, image=image)
-        db.session.add(img)
+    for image in request.files.to_dict():
+        if image.startswith('image'):
+            img_url = upload(process_image(request.files[image]))
+            img = MonumentImages(monument_id=monument.monument_id, image=img_url)
+            db.session.add(img)
     db.session.commit()
 
     return jsonify({"monument_id": monument.monument_id})

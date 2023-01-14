@@ -15,17 +15,23 @@ def initialize_app():
     print('Firebase initialized...')
 
 
-def upload(files):
+def process_image(file):
+    img = Image.open(file)
+    img.resize((576, 200))
+    b = io.BytesIO()
+    img.save(b, "webp")
+    b.seek(0)
+    return [file, b]
+
+
+def upload(file):
     bucket = storage.bucket('g20scapp.appspot.com')
-    urls = []
-    for file in files:
-        blob = bucket.blob(str(datetime.datetime.now().timestamp()) + str(files[file].filename))
-        img = Image.open(files[file])
-        img.resize((576, 200))
-        b = io.BytesIO()
-        img.save(b, "webp")
-        b.seek(0)
-        blob.upload_from_file(file_obj=b, content_type=f'image/{files[file].filename.split(".").pop()}')
+    if type(file) == list:
+        blob = bucket.blob(str(datetime.datetime.now().timestamp()) + str(file[0].filename))
+        blob.upload_from_file(file_obj=file[1], content_type=file[0].content_type)
         blob.make_public()
-        urls.append(blob.public_url)
-    return urls
+        return blob.public_url
+    blob = bucket.blob(str(datetime.datetime.now().timestamp()) + str(file.filename))
+    blob.upload_from_file(file_obj=file, content_type=file.content_type)
+    blob.make_public()
+    return blob.public_url
