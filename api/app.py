@@ -45,12 +45,6 @@ def get_populars(language):
     response = []
     query = Monuments.query.order_by(Monuments.views).limit(3).all()
     for monument in query:
-        # translation = MonumentTranslations.query.filter_by(monument_id=monument.monument_id,
-        # language_code=language).first() image = MonumentImages.query.filter_by(
-        # monument_id=monument.monument_id).first() response.append({ "name": translation.name or monument.name,
-        # "image": image.image, "long": monument.long, "lat": monument.lat
-        #
-        # })
         response.append(get_monument(monument, language))
     return jsonify({"status": 200, "response": response})
 
@@ -87,7 +81,6 @@ def get_monument_view(language, monument_id):
 @api.route('/<language>/monuments', methods=["POST"])
 def get_monuments(language):
     response = []
-    print(request.json)
     for monID in request.json:
         mon = Monuments.query.filter_by(monument_id=monID).first()
         if mon:

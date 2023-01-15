@@ -1,6 +1,5 @@
 import datetime
 import hashlib
-import json
 
 from flask import Blueprint, request, jsonify
 from flask_login import login_required
@@ -16,8 +15,6 @@ admin = Blueprint('admin', __name__, url_prefix='/admin')
 @login_required
 def new_monument():
     payload = request.form.to_dict()
-
-    print(payload)
 
     name = payload['name'].strip()
     monument_id = name.replace(' ', '-') + '-' + str(hashlib.sha256(
@@ -110,14 +107,10 @@ def addLanguage(monument_id):
         translation = MonumentTranslations.query.filter_by(monument_id=monument_id,
                                                            language_code=payload['language']
                                                            ).first()
-        print(translation)
         if translation:
-            print('k')
             if 'audio' in request.files:
                 audio = upload(request.files['audio'])
-                print(audio)
                 translation.audio = audio
-            print('aaa')
             translation.name = payload['name']
             translation.description = payload['description']
             try:
@@ -125,15 +118,11 @@ def addLanguage(monument_id):
             except Exception as e:
                 print(e)
 
-            print('l')
             return jsonify({"message": f"{payload['language']} translation updated"}), 200
         else:
-            print('h')
             audio = request.files.get('audio', None)
-            print('k')
             if audio:
                 audio = upload(audio)
-            print(audio)
             translation = MonumentTranslations(
                 monument_id=monument.monument_id,
                 language_code=payload['language'],
