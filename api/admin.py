@@ -17,8 +17,7 @@ admin = Blueprint('admin', __name__, url_prefix='/admin')
 def new_monument():
     payload = request.form.to_dict()
 
-    for k in payload:
-        payload[k] = json.loads(payload[k])
+    print(payload)
 
     name = payload['name'].strip()
     monument_id = name.replace(' ', '-') + '-' + str(hashlib.sha256(
@@ -149,14 +148,14 @@ def addLanguage(monument_id):
 
     if request.method == "DELETE":
         translation = MonumentTranslations.query.filter_by(monument_id=monument_id,
-                                                           language_code=request.json['language']
+                                                           language_code=request.args['lang']
                                                            ).first()
         if not translation:
-            return jsonify({"message": f"{request.json['language']} translation not found"}), 404
+            return jsonify({"message": f"{request.args['lang']} translation not found"}), 404
 
         db.session.delete(translation)
         db.session.commit()
-        return jsonify({"message": f"{request.json['language']} translation deleted"}), 200
+        return jsonify({"message": f"{request.args['lang']} translation deleted"}), 200
 
 
 @admin.route('/monuments', methods=["GET"])
