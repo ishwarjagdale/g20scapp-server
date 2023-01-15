@@ -29,7 +29,8 @@ def get_monument(monument, code, detailed=False):
         "images": images,
         "long": monument.long,
         "lat": monument.lat,
-        "languages": languages
+        "languages": languages,
+        "category": monument.category
     }
 
     if detailed:

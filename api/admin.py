@@ -6,7 +6,7 @@ from flask import Blueprint, request, jsonify
 from flask_login import login_required
 
 from api.app import get_monument
-from api.fire_storage import upload, process_image
+from api.fire_storage import upload, process_image, deleteBlob
 from database import Monuments, MonumentTranslations, MonumentImages, db
 
 admin = Blueprint('admin', __name__, url_prefix='/admin')
@@ -88,6 +88,7 @@ def delete_image(monument_id):
     image = MonumentImages.query.filter_by(monument_id=monument_id, image=request.json['image']).first()
 
     if image:
+        deleteBlob(image.image)
         db.session.delete(image)
         db.session.commit()
 
@@ -167,3 +168,27 @@ def getAllMonuments():
         response.append(get_monument(monument, 'en'))
 
     return jsonify({"response": response})
+
+
+@admin.route('/monuments/<monument_id>', methods=["DELETE"])
+@login_required
+def delete_monument(monument_id):
+
+    monument = Monuments.query.filter_by(monument_id=monument_id).first()
+
+    if monument:
+        images = MonumentImages.query.filter_by(monument_id=monument_id).all()
+        for img in images:
+            if '/g20scapp.appspot.com/' in img.image:
+                deleteBlob(img.image)
+        translation = MonumentTranslations.query.filter_by(monument_id=monument_id).all()
+        for desc in translation:
+            if desc.audio and '/g20scapp.appspot.com/' in desc.audio:
+                deleteBlob(desc.audio)
+
+        db.session.delete(monument)
+        db.session.commit()
+
+        return jsonify({"message": f"{monument.monument_id} deleted"}), 200
+
+    return jsonify({"message": "monument not found"}), 404

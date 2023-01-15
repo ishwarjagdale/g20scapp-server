@@ -2,6 +2,8 @@ import datetime
 import io
 import os
 import json
+from urllib import parse
+
 from PIL import Image
 import firebase_admin
 from firebase_admin import credentials
@@ -37,5 +39,14 @@ def upload(file):
     return blob.public_url
 
 
-def deleteBlob():
+def deleteBlob(url):
     bucket = storage.bucket('g20scapp.appspot.com')
+    blob_name = parse.urlparse(
+        url
+    ).path.removeprefix('/g20scapp.appspot.com/')
+    blob = bucket.get_blob(blob_name)
+    if blob.exists():
+        print(f"Deleting blob {blob_name}")
+        blob.delete()
+        return
+    print(f"Deleting blob {blob_name}: doesn't exist")
