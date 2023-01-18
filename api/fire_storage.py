@@ -45,7 +45,7 @@ def deleteBlob(url):
         url
     ).path.removeprefix('/g20scapp.appspot.com/')
     blob = bucket.get_blob(blob_name)
-    if blob.exists():
+    if blob and blob.exists():
         print(f"Deleting blob {blob_name}")
         blob.delete()
         return
