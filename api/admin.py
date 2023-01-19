@@ -31,9 +31,9 @@ def new_monument():
     if 'id' in payload:
         monument = Monuments.query.filter_by(monument_id=payload['id']).first()
         if monument:
-            monument.name = payload['name'].strip()
-            monument.lat, monument.long = payload['coordinates'].split(",")
-            monument.category = payload['category'].strip()
+            monument.name = name
+            monument.long, monument.lat = long, lat
+            monument.category = category
 
             db.session.commit()
 
