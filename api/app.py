@@ -1,5 +1,6 @@
 from flask import Blueprint, jsonify, request
 from database import Monuments, MonumentImages, MonumentTranslations
+from math import radians, cos, sin, asin, sqrt
 
 api = Blueprint('api', __name__, url_prefix='/api')
 
@@ -85,5 +86,44 @@ def get_monuments(language):
         mon = Monuments.query.filter_by(monument_id=monID).first()
         if mon:
             response.append(get_monument(monument=mon, code=language, detailed=False))
+
+    return jsonify({"status": 200, "response": response})
+
+
+# Python 3 program to calculate Distance Between Two Points on Earth
+# FROM Geeks for Geeks
+def distance(lat1, lon1, lat2, lon2):
+    # The math module contains a function named
+    # radians which converts from degrees to radians.
+    lon1 = radians(lon1)
+    lon2 = radians(lon2)
+    lat1 = radians(lat1)
+    lat2 = radians(lat2)
+
+    # Haversine formula
+    dlon = lon2 - lon1
+    dlat = lat2 - lat1
+    a = sin(dlat / 2) ** 2 + cos(lat1) * cos(lat2) * sin(dlon / 2) ** 2
+
+    c = 2 * asin(sqrt(a))
+
+    # Radius of earth in kilometers. Use 3956 for miles
+    r = 6371
+
+    # calculate the result
+    return c * r
+
+
+@api.route('/nearby', methods=["POST"])
+def get_nearby_location():
+    print(request.json)
+    long, lat = float(request.json['longitude']), float(request.json['latitude'])
+    print(lat, long)
+    response = []
+    query = Monuments.query.all()
+    for mon in query:
+        if distance(lat, long, float(mon.lat), float(mon.long)) < 5:
+            response.append(get_monument(mon, 'en'))
+    print(response)
 
     return jsonify({"status": 200, "response": response})
