@@ -28,9 +28,19 @@ def new_monument():
 
     category = payload['category'].strip().title()
 
-    monument = Monuments(monument_id=monument_id, name=name, long=long, lat=lat, category=category)
-    db.session.add(monument)
-    db.session.commit()
+    if 'id' in payload:
+        monument = Monuments.query.filter_by(monument_id=payload['id']).first()
+        if monument:
+            monument.name = payload['name'].strip()
+            monument.lat, monument.long = payload['coordinates'].split(",")
+            monument.category = payload['category'].strip()
+
+            db.session.commit()
+
+    else:
+        monument = Monuments(monument_id=monument_id, name=name, long=long, lat=lat, category=category)
+        db.session.add(monument)
+        db.session.commit()
 
     for image in request.files.to_dict():
         if image.startswith('image'):
@@ -39,13 +49,13 @@ def new_monument():
             db.session.add(img)
     db.session.commit()
 
-    return jsonify({"monument_id": monument.monument_id})
+    return jsonify({"monument_id": monument.monument_id, "message": "monument updated!"}) if 'id' in payload else \
+        jsonify({"monument_id": monument.monument_id})
 
 
 @admin.route('/edit/<monument_id>', methods=["GET"])
 @login_required
 def get_complete_monument(monument_id):
-
     monument = Monuments.query.filter_by(monument_id=monument_id).first()
 
     if not monument:
@@ -161,7 +171,6 @@ def getAllMonuments():
 @admin.route('/monuments/<monument_id>', methods=["DELETE"])
 @login_required
 def delete_monument(monument_id):
-
     monument = Monuments.query.filter_by(monument_id=monument_id).first()
 
     if monument:
