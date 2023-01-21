@@ -7,6 +7,7 @@ from api.admin import admin
 from api.app import api
 from flask_cors import CORS
 from api.fire_storage import initialize_app
+from share import share
 
 app = Flask(__name__)
 app.config.from_pyfile('config.py')
@@ -23,6 +24,7 @@ with app.app_context():
 app.register_blueprint(auth)
 app.register_blueprint(admin)
 app.register_blueprint(api)
+app.register_blueprint(share)
 
 
 @app.route('/')
