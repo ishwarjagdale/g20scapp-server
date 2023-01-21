@@ -31,5 +31,10 @@ def share_monument(monument_id):
             <meta property="og:description" content="{description}" />
             <meta property="og:url" content="{url}" />
         </head>
+        <body>
+            <script type='text/javascript'>
+                window.location.replace('https://g20-scapp.pages.dev/monument/{monument_id}')
+            </script>
+        </body>
     </html>
     """
