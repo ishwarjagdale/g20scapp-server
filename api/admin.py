@@ -2,7 +2,7 @@ import datetime
 import hashlib
 
 from flask import Blueprint, request, jsonify
-from flask_login import login_required
+from flask_login import login_required, current_user
 
 from api.app import get_monument
 from api.fire_storage import upload, process_image, deleteBlob
@@ -37,10 +37,14 @@ def new_monument():
 
             db.session.commit()
 
+            print(current_user.email_addr, "updated monument", monument.monument_id)
+
     else:
         monument = Monuments(monument_id=monument_id, name=name, long=long, lat=lat, category=category)
         db.session.add(monument)
         db.session.commit()
+
+        print(current_user.email_addr, "added monument", monument.monument_id)
 
     for image in request.files.to_dict():
         if image.startswith('image'):
@@ -48,6 +52,8 @@ def new_monument():
             img = MonumentImages(monument_id=monument.monument_id, image=img_url)
             db.session.add(img)
     db.session.commit()
+
+    print(current_user.email_addr, "added images for monument", monument.monument_id)
 
     return jsonify({"monument_id": monument.monument_id, "message": "monument updated!"}) if 'id' in payload else \
         jsonify({"monument_id": monument.monument_id})
@@ -98,6 +104,8 @@ def delete_image(monument_id):
         db.session.delete(image)
         db.session.commit()
 
+        print(current_user.email_addr, "deleted image for monument", monument.monument_id)
+
         return jsonify({"message": "image deleted"}), 200
 
     return jsonify({"message": "image not found"}), 404
@@ -143,6 +151,8 @@ def addLanguage(monument_id):
             db.session.add(translation)
             db.session.commit()
 
+            print(current_user.email_addr, "added translation", payload['language'], "for", monument.monument_id)
+
             return jsonify({"message": f"{payload['language']} translation added"}), 200
 
     if request.method == "DELETE":
@@ -154,6 +164,9 @@ def addLanguage(monument_id):
 
         db.session.delete(translation)
         db.session.commit()
+
+        print(current_user.email_addr, "deleted translation", request.args['lang'], "for", monument.monument_id)
+
         return jsonify({"message": f"{request.args['lang']} translation deleted"}), 200
 
 
@@ -185,6 +198,8 @@ def delete_monument(monument_id):
 
         db.session.delete(monument)
         db.session.commit()
+
+        print(current_user.email_addr, "deleted monument", monument_id)
 
         return jsonify({"message": f"{monument.monument_id} deleted"}), 200
 

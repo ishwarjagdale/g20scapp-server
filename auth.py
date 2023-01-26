@@ -1,7 +1,10 @@
+import datetime
+import hashlib
+
 from flask import Blueprint, request, jsonify
 from flask_login import LoginManager, login_required, login_user, current_user, logout_user
 
-from database import Users
+from database import Users, db
 
 auth = Blueprint('auth', __name__, url_prefix='/auth', )
 
@@ -29,6 +32,7 @@ def login():
         if user:
             if user.check_password(password):
                 if login_user(user):
+                    print(user.email_addr, "logged in")
                     return jsonify(user.to_dict())
                 return jsonify({"message": "something went wrong while logging in"}), 500
             return {"message": "invalid credentials"}, 403
@@ -59,5 +63,6 @@ def login():
 @auth.route('/logout', methods=["GET"])
 @login_required
 def logout():
+    print(current_user.email_addr, "logging out")
     logout_user()
     return jsonify(200)
