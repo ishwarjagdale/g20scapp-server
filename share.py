@@ -1,3 +1,5 @@
+import os
+
 from flask import Blueprint
 from database import Monuments, MonumentImages, MonumentTranslations
 
@@ -33,7 +35,7 @@ def share_monument(monument_id):
         </head>
         <body>
             <script type='text/javascript'>
-                window.location.replace('https://g20-scapp.pages.dev/monument/{monument_id}')
+                window.location.replace('{os.environ.get("FRONT_END_URL", 'https://proto-scapp.pages.dev')}/monument/{monument_id}')
             </script>
         </body>
     </html>
