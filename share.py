@@ -18,7 +18,7 @@ def share_monument(monument_id):
 
     if monument:
         title = monument.name
-        url = f"https://g20-scapp.pages.dev/monument/{monument_id}"
+        url = f"{os.environ.get('FRONT_END_URL', 'https://proto-scapp.pages.dev')}/monument/{monument_id}"
         if images:
             image = images.image
         if desc:
