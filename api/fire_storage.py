@@ -29,7 +29,7 @@ def process_image(file):
 def upload(file):
     bucket = storage.bucket('g20scapp.appspot.com')
     if type(file) == list:
-        blob = bucket.blob(str(datetime.datetime.now().timestamp()) + "-" + str(file[0].filename))
+        blob = bucket.blob(str(datetime.datetime.now().timestamp()) + "-" + str(file[0].filename).replace(' ', '-'))
         blob.upload_from_file(file_obj=file[1], content_type=file[0].content_type)
         blob.make_public()
         return blob.public_url
