@@ -89,16 +89,18 @@ def delete_image(monument_id):
         return jsonify({"message": "monument not found"}), 404
 
     if request.method == "POST":
+        urls = []
         for image in request.files.to_dict():
             if image.startswith('image'):
                 img_url = upload(process_image(request.files[image]))
                 img = MonumentImages(monument_id=monument.monument_id, image=img_url)
                 db.session.add(img)
+                urls.append(img_url)
         db.session.commit()
 
         print(current_user.email_addr, "added images for monument", monument.monument_id)
 
-        return jsonify({"monument_id": monument.monument_id, "message": "image uploaded!"})
+        return jsonify({"monument_id": monument.monument_id, "message": "image uploaded!", "urls": urls})
 
     if request.method == "DELETE":
         image = MonumentImages.query.filter_by(monument_id=monument_id, image=request.args['image']).first()
