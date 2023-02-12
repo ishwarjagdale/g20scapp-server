@@ -44,6 +44,7 @@ def deleteBlob(url):
     blob_name = parse.unquote(parse.urlparse(
         url
     ).path.removeprefix('/g20scapp.appspot.com/'))
+    print(blob_name)
     blob = bucket.get_blob(blob_name)
     if blob and blob.exists():
         print(f"Deleting blob {blob_name}")
