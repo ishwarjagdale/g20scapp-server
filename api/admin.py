@@ -46,15 +46,6 @@ def new_monument():
 
         print(current_user.email_addr, "added monument", monument.monument_id)
 
-    for image in request.files.to_dict():
-        if image.startswith('image'):
-            img_url = upload(process_image(request.files[image]))
-            img = MonumentImages(monument_id=monument.monument_id, image=img_url)
-            db.session.add(img)
-    db.session.commit()
-
-    print(current_user.email_addr, "added images for monument", monument.monument_id)
-
     return jsonify({"monument_id": monument.monument_id, "message": "monument updated!"}) if 'id' in payload else \
         jsonify({"monument_id": monument.monument_id})
 
@@ -89,7 +80,7 @@ def get_complete_monument(monument_id):
     return jsonify(response), 200
 
 
-@admin.route('/monuments/<monument_id>/images', methods=["POST"])
+@admin.route('/monuments/<monument_id>/images', methods=["POST", "DELETE"])
 @login_required
 def delete_image(monument_id):
     monument = Monuments.query.filter_by(monument_id=monument_id).first()
@@ -97,18 +88,31 @@ def delete_image(monument_id):
     if not monument:
         return jsonify({"message": "monument not found"}), 404
 
-    image = MonumentImages.query.filter_by(monument_id=monument_id, image=request.json['image']).first()
-
-    if image:
-        deleteBlob(image.image)
-        db.session.delete(image)
+    if request.method == "POST":
+        for image in request.files.to_dict():
+            if image.startswith('image'):
+                img_url = upload(process_image(request.files[image]))
+                img = MonumentImages(monument_id=monument.monument_id, image=img_url)
+                db.session.add(img)
         db.session.commit()
 
-        print(current_user.email_addr, "deleted image for monument", monument.monument_id)
+        print(current_user.email_addr, "added images for monument", monument.monument_id)
 
-        return jsonify({"message": "image deleted"}), 200
+        return jsonify({"monument_id": monument.monument_id, "message": "image uploaded!"})
 
-    return jsonify({"message": "image not found"}), 404
+    if request.method == "DELETE":
+        image = MonumentImages.query.filter_by(monument_id=monument_id, image=request.json['image']).first()
+
+        if image:
+            deleteBlob(image.image)
+            db.session.delete(image)
+            db.session.commit()
+
+            print(current_user.email_addr, "deleted image for monument", monument.monument_id)
+
+            return jsonify({"message": "image deleted"}), 200
+
+        return jsonify({"message": "image not found"}), 404
 
 
 @admin.route('/monuments/<monument_id>/description', methods=["POST", "DELETE"])
