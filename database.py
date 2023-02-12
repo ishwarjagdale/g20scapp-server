@@ -82,8 +82,8 @@ class Monuments(db.Model):
 
     monument_id = db.Column(db.VARCHAR, primary_key=True)
     name = db.Column(db.VARCHAR, nullable=False)
-    long = db.Column(db.VARCHAR)
-    lat = db.Column(db.VARCHAR)
+    long = db.Column(db.FLOAT, default=-1)
+    lat = db.Column(db.FLOAT, default=-1)
     views = db.Column(db.Integer, default=0, nullable=False)
     category = db.Column(db.VARCHAR, nullable=False)
 
