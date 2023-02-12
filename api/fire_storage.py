@@ -41,9 +41,9 @@ def upload(file):
 
 def deleteBlob(url):
     bucket = storage.bucket('g20scapp.appspot.com')
-    blob_name = parse.urlparse(
+    blob_name = parse.unquote(parse.urlparse(
         url
-    ).path.removeprefix('/g20scapp.appspot.com/')
+    ).path.removeprefix('/g20scapp.appspot.com/'))
     blob = bucket.get_blob(blob_name)
     if blob and blob.exists():
         print(f"Deleting blob {blob_name}")
