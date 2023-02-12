@@ -103,8 +103,9 @@ def delete_image(monument_id):
         return jsonify({"monument_id": monument.monument_id, "message": "image uploaded!", "urls": urls})
 
     if request.method == "DELETE":
+        print(request.args['image'])
         image = MonumentImages.query.filter_by(monument_id=monument_id, image=request.args['image']).first()
-
+        print(image)
         if image:
             deleteBlob(image.image)
             db.session.delete(image)
