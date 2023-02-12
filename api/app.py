@@ -122,11 +122,9 @@ def get_nearby_location():
     response = []
     query = Monuments.query.all()
     for mon in query:
-        try:
-            if distance(lat, long, float(mon.lat), float(mon.long)) < 5:
+        if mon.lat > 0 and mon.long > 0:
+            if distance(lat, long, mon.lat, mon.long) < 5:
                 response.append(get_monument(mon, 'en'))
-        except ValueError or Exception as e:
-            print(e)
     print(response)
 
     return jsonify({"status": 200, "response": response})
