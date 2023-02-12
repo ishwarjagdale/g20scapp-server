@@ -21,11 +21,7 @@ def new_monument():
     monument_id = name.replace(' ', '-') + '-' + str(hashlib.sha256(
         bytes(str(datetime.datetime.now(datetime.timezone.utc).timestamp()), encoding='utf-8')
     ).hexdigest())
-    coordinates = payload['coordinates'].strip()
-    if ',' in coordinates:
-        long, lat = map(lambda x: x.strip(), coordinates.split(','))
-    else:
-        long, lat = None, None
+    long, lat = payload['longitude'], payload['latitude']
 
     category = payload['category'].strip().title()
 
@@ -65,7 +61,8 @@ def get_complete_monument(monument_id):
     response = {
         "id": monument.monument_id,
         "name": monument.name,
-        "coordinates": f"{monument.long}, {monument.lat}",
+        "longitude": monument.long,
+        "latitude": monument.lat,
         "category": monument.category,
         "images": list(map(lambda x: x.image, images)),
         "descriptions": {}
