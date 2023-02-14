@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request
-from database import Monuments, MonumentImages, MonumentTranslations
+from database import Monuments, MonumentImages, MonumentTranslations, db
 from math import radians, cos, sin, asin, sqrt
 
 api = Blueprint('api', __name__, url_prefix='/api')
@@ -76,6 +76,11 @@ def get_category(language, category):
 def get_monument_view(language, monument_id):
     mon = Monuments.query.filter_by(monument_id=monument_id).first()
     response = get_monument(monument=mon, code=language, detailed=bool(request.args.get('detailed')))
+
+    if bool(request.args.get('detailed')):
+        mon.views += 1
+        db.session.commit()
+
     return jsonify({"status": 200, "response": response})
 
 
