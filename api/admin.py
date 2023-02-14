@@ -1,5 +1,6 @@
 import datetime
 import hashlib
+import os
 
 from flask import Blueprint, request, jsonify
 from flask_login import login_required, current_user
@@ -191,11 +192,11 @@ def delete_monument(monument_id):
     if monument:
         images = MonumentImages.query.filter_by(monument_id=monument_id).all()
         for img in images:
-            if '/g20scapp.appspot.com/' in img.image:
+            if f'/{os.environ.get("BUCKET_NAME")}/' in img.image:
                 deleteBlob(img.image)
         translation = MonumentTranslations.query.filter_by(monument_id=monument_id).all()
         for desc in translation:
-            if desc.audio and '/g20scapp.appspot.com/' in desc.audio:
+            if desc.audio and f'/{os.environ.get("BUCKET_NAME")}/' in desc.audio:
                 deleteBlob(desc.audio)
 
         db.session.delete(monument)
