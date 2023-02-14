@@ -80,6 +80,30 @@ def login():
 #     return jsonify({"message": "invalid or missing parameters"}), 400
 
 
+@auth.route('/settings', methods=["POST"])
+@login_required
+def settings():
+    payload = dict(request.json)
+
+    user = Users.get_user(user_id=current_user.user_id)
+
+    if "name" in payload:
+        user.name = payload['name']
+
+    if "email" in payload:
+        user.email_addr = payload['email']
+
+    if "password" in payload:
+        d_now = datetime.datetime.now(datetime.timezone.utc).timestamp()
+        password = hashlib.sha256(bytes(str(d_now).replace('.', payload['password']), encoding='utf-8')).hexdigest()
+
+        user.password = password
+
+    db.session.commit()
+
+    return jsonify({"message": "Changes saved successfully", "user": user.to_dict()}), 200
+
+
 @auth.route('/logout', methods=["GET"])
 @login_required
 def logout():
