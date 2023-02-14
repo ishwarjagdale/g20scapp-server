@@ -94,7 +94,8 @@ def settings():
         user.email_addr = payload['email']
 
     if "password" in payload:
-        d_now = datetime.datetime.now(datetime.timezone.utc).timestamp()
+        d_now = user.date_created
+        print(type(d_now), str(d_now))
         password = hashlib.sha256(bytes(str(d_now).replace('.', payload['password']), encoding='utf-8')).hexdigest()
 
         user.password = password
