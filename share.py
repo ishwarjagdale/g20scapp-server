@@ -8,6 +8,12 @@ share = Blueprint('share', __name__, url_prefix='/share')
 
 @share.route('/<monument_id>', methods=["GET"])
 def share_monument(monument_id):
+    """
+    This route is used to share SEO data for the monument
+    The page rendered redirects the user to the front end
+    :param monument_id: the id of the monument
+    :return:
+    """
     monument = Monuments.query.filter_by(monument_id=monument_id).first()
     images = MonumentImages.query.filter_by(monument_id=monument_id).first()
     desc = MonumentTranslations.query.filter_by(monument_id=monument_id, language_code='en').first()
@@ -18,7 +24,7 @@ def share_monument(monument_id):
 
     if monument:
         title = monument.name
-        url = f"{os.environ.get('FRONT_END_URL', 'https://proto-scapp.pages.dev')}/monument/{monument_id}"
+        url = f"{os.environ.get('FRONT_END_URL', {os.environ.get('FRONT_END_URL')})}/monument/{monument_id}"
         if images:
             image = images.image
         if desc:
@@ -35,7 +41,7 @@ def share_monument(monument_id):
         </head>
         <body>
             <script type='text/javascript'>
-                window.location.replace('{os.environ.get("FRONT_END_URL", 'https://proto-scapp.pages.dev')}/monument/{monument_id}')
+                window.location.replace('{os.environ.get("FRONT_END_URL", os.environ.get("FRONT_END_URL"))}/monument/{monument_id}')
             </script>
         </body>
     </html>

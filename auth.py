@@ -40,6 +40,26 @@ def login():
     return jsonify({"message": "invalid or missing parameters"}), 400
 
 
+"""
+    Below route/function is used to create new user accounts (sign up) to access the admin panel
+    It is commented as no one should be able to create account on their own
+    
+    To create new accounts:
+    enable this route (de-comment)
+    and send a POST request to this route "/auth/signup"
+    with payload as follows:
+    
+    {
+        "name": "user name",
+        "email": "user-email-address",
+        "password": "password"
+    } 
+    
+    You can use postman service for this action, as suitable
+    
+    Make sure the attribute 'authenticated' is true for the particular user to enable logins.
+"""
+
 # @auth.route('/signup', methods=["POST"])
 # def signup():
 #     name = request.json.get('name', None)

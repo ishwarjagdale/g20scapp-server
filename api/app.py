@@ -116,6 +116,10 @@ def distance(lat1, lon1, lat2, lon2):
 
 @api.route('/nearby', methods=["POST"])
 def get_nearby_location():
+    """
+    Function returns response with all the monuments under 5KM range from the coordiantes recieved from the request
+    :return:
+    """
     print(request.json)
     long, lat = float(request.json['longitude']), float(request.json['latitude'])
     print(lat, long)
