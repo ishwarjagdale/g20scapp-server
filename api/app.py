@@ -44,7 +44,7 @@ def get_monument(monument, code, detailed=False):
 @api.route('/<language>/populars', methods=["GET"])
 def get_populars(language):
     response = []
-    query = Monuments.query.order_by(Monuments.views).limit(3).all()
+    query = Monuments.query.order_by(Monuments.views).desc().limit(3).all()
     for monument in query:
         response.append(get_monument(monument, language))
     return jsonify({"status": 200, "response": response})
