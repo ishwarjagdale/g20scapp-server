@@ -8,12 +8,6 @@ share = Blueprint('share', __name__, url_prefix='/share')
 
 @share.route('/<monument_id>', methods=["GET"])
 def share_monument(monument_id):
-    """
-    This route is used to share SEO data for the monument
-    The page rendered redirects the user to the front end
-    :param monument_id: the id of the monument
-    :return:
-    """
     monument = Monuments.query.filter_by(monument_id=monument_id).first()
     images = MonumentImages.query.filter_by(monument_id=monument_id).first()
     desc = MonumentTranslations.query.filter_by(monument_id=monument_id, language_code='en').first()

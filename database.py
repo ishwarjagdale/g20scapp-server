@@ -86,6 +86,7 @@ class Monuments(db.Model):
     lat = db.Column(db.FLOAT, default=-1)
     views = db.Column(db.Integer, default=0, nullable=False)
     category = db.Column(db.VARCHAR, nullable=False)
+    public = db.Column(db.Boolean, nullable=False, default=True)
 
 
 class MonumentImages(db.Model):

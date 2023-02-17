@@ -24,6 +24,7 @@ def new_monument():
     long, lat = payload['longitude'], payload['latitude']
 
     category = payload['category'].strip().title()
+    public = True if payload['makePublic'] == 'true' else False
 
     if 'id' in payload:
         monument = Monuments.query.filter_by(monument_id=payload['id']).first()
@@ -31,13 +32,14 @@ def new_monument():
             monument.name = name
             monument.long, monument.lat = long, lat
             monument.category = category
+            monument.public = public
 
             db.session.commit()
 
             print(current_user.email_addr, "updated monument", monument.monument_id)
 
     else:
-        monument = Monuments(monument_id=monument_id, name=name, long=long, lat=lat, category=category)
+        monument = Monuments(monument_id=monument_id, name=name, long=long, lat=lat, category=category, public=public)
         db.session.add(monument)
         db.session.commit()
 
@@ -65,7 +67,8 @@ def get_complete_monument(monument_id):
         "latitude": monument.lat,
         "category": monument.category,
         "images": list(map(lambda x: x.image, images)),
-        "descriptions": {}
+        "descriptions": {},
+        "public": monument.public
     }
 
     for desc in descriptions:

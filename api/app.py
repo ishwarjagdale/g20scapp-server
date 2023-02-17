@@ -9,7 +9,7 @@ def get_monument(monument, code, detailed=False):
     images = []
     translation = MonumentTranslations.query.filter_by(monument_id=monument.monument_id, language_code=code).first()
     if not translation:
-        translation = MonumentTranslations.query.filter_by(monument_id=monument.monument_id, language_code='en').first()
+        translation = MonumentTranslations.query.filter_by(monument_id=monument.monument_id).first()
     temp = MonumentImages.query.filter_by(monument_id=monument.monument_id)
 
     if detailed:
@@ -31,12 +31,14 @@ def get_monument(monument, code, detailed=False):
         "long": monument.long,
         "lat": monument.lat,
         "languages": languages,
-        "category": monument.category
+        "category": monument.category,
+        "public": monument.public
     }
 
     if detailed:
+        resp["language_code"] = translation.language_code if translation else None
         resp["description"] = translation.description if translation else None
-        resp["audio"] = translation.audio
+        resp["audio"] = translation.audio if translation else None
 
     return resp
 
@@ -44,7 +46,7 @@ def get_monument(monument, code, detailed=False):
 @api.route('/<language>/populars', methods=["GET"])
 def get_populars(language):
     response = []
-    query = Monuments.query.order_by(Monuments.views.desc()).limit(3).all()
+    query = Monuments.query.filter_by(public=True).order_by(Monuments.views.desc()).limit(3).all()
     for monument in query:
         response.append(get_monument(monument, language))
     return jsonify({"status": 200, "response": response})
@@ -56,7 +58,7 @@ def get_categories(language):
 
     for cat, in Monuments.query.with_entities(Monuments.category).distinct():
         response[cat] = []
-        for mon in Monuments.query.filter_by(category=cat).limit(3).all():
+        for mon in Monuments.query.filter_by(category=cat, public=True).limit(3).all():
             response[cat].append(get_monument(monument=mon, code=language))
 
     return jsonify({"status": 200, "response": response})
@@ -66,7 +68,7 @@ def get_categories(language):
 def get_category(language, category):
     response = []
     category = category.replace('-', ' ').title()
-    for mon in Monuments.query.filter_by(category=category).all():
+    for mon in Monuments.query.filter_by(category=category, public=True).all():
         response.append(get_monument(monument=mon, code=language))
 
     return jsonify({"status": 200, "response": response})
@@ -74,7 +76,7 @@ def get_category(language, category):
 
 @api.route('/<language>/monument/<monument_id>', methods=["GET"])
 def get_monument_view(language, monument_id):
-    mon = Monuments.query.filter_by(monument_id=monument_id).first()
+    mon = Monuments.query.filter_by(monument_id=monument_id, public=True).first()
     response = get_monument(monument=mon, code=language, detailed=bool(request.args.get('detailed')))
 
     if bool(request.args.get('detailed')):
@@ -88,7 +90,7 @@ def get_monument_view(language, monument_id):
 def get_monuments(language):
     response = []
     for monID in request.json:
-        mon = Monuments.query.filter_by(monument_id=monID).first()
+        mon = Monuments.query.filter_by(monument_id=monID, public=True).first()
         if mon:
             response.append(get_monument(monument=mon, code=language, detailed=False))
 
@@ -121,10 +123,6 @@ def distance(lat1, lon1, lat2, lon2):
 
 @api.route('/nearby', methods=["POST"])
 def get_nearby_location():
-    """
-    Function returns response with all the monuments under 5KM range from the coordiantes recieved from the request
-    :return:
-    """
     print(request.json)
     long, lat = float(request.json['longitude']), float(request.json['latitude'])
     print(lat, long)
