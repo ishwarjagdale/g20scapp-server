@@ -7,9 +7,6 @@ api = Blueprint('api', __name__, url_prefix='/api')
 
 def get_monument(monument, code, detailed=False):
     images = []
-    translation = MonumentTranslations.query.filter_by(monument_id=monument.monument_id, language_code=code).first()
-    if not translation:
-        translation = MonumentTranslations.query.filter_by(monument_id=monument.monument_id).first()
     temp = MonumentImages.query.filter_by(monument_id=monument.monument_id)
 
     if detailed:
@@ -26,7 +23,7 @@ def get_monument(monument, code, detailed=False):
 
     resp = {
         "id": monument.monument_id,
-        "name": translation.name if translation else monument.name,
+        "name": monument.name,
         "images": images,
         "long": monument.long,
         "lat": monument.lat,
@@ -36,6 +33,11 @@ def get_monument(monument, code, detailed=False):
     }
 
     if detailed:
+        translation = MonumentTranslations.query.filter_by(monument_id=monument.monument_id, language_code=code).first()
+        if not translation:
+            translation = MonumentTranslations.query.filter_by(monument_id=monument.monument_id).first()
+
+        resp["name"] = translation.name if translation else resp["name"]
         resp["language_code"] = translation.language_code if translation else None
         resp["description"] = translation.description if translation else None
         resp["audio"] = translation.audio if translation else None
