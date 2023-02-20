@@ -2,7 +2,7 @@ from flask import Blueprint, jsonify, request
 from database import Monuments, MonumentImages, MonumentTranslations, db
 from math import radians, cos, sin, asin, sqrt
 
-api = Blueprint('api', __name__, url_prefix='/api')
+api = Blueprint('api', __name__, url_prefix='/url_qr/api')
 
 
 def get_monument(monument, code, detailed=False):

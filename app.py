@@ -27,7 +27,7 @@ app.register_blueprint(api)
 app.register_blueprint(share)
 
 
-@app.route('/')
+@app.route('/url_qr')
 def hello_world():  # put application's code here
     return 'Hello World!'
 

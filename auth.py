@@ -6,7 +6,7 @@ from flask_login import LoginManager, login_required, login_user, current_user, 
 
 from database import Users, db
 
-auth = Blueprint('auth', __name__, url_prefix='/auth', )
+auth = Blueprint('auth', __name__, url_prefix='/url_qr/auth', )
 
 login_manager = LoginManager()
 

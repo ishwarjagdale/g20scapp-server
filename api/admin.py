@@ -9,7 +9,7 @@ from api.app import get_monument
 from api.fire_storage import upload, process_image, deleteBlob
 from database import Monuments, MonumentTranslations, MonumentImages, db
 
-admin = Blueprint('admin', __name__, url_prefix='/admin')
+admin = Blueprint('admin', __name__, url_prefix='/url_qr/admin')
 
 
 @admin.route('/new', methods=["POST"])
@@ -142,7 +142,14 @@ def addLanguage(monument_id):
             except Exception as e:
                 print(e)
 
-            return jsonify({"message": f"{payload['language']} translation updated"}), 200
+            return jsonify({"message": f"{payload['language']} translation updated",
+                            "translation": {
+                                "code": translation.language_code,
+                                "name": translation.name,
+                                "description": translation.description,
+                                "audio": translation.audio
+                            }
+                            }), 200
         else:
             audio = request.files.get('audio', None)
             if audio:
