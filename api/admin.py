@@ -134,6 +134,8 @@ def addLanguage(monument_id):
         if translation:
             if 'audio' in request.files:
                 audio = upload(request.files['audio'])
+                if translation.audio:
+                    deleteBlob(translation.audio)
                 translation.audio = audio
             translation.name = payload['name']
             translation.description = payload['description']
