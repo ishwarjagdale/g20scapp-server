@@ -6,7 +6,7 @@ from flask import Blueprint, request, jsonify
 from flask_login import login_required, current_user
 
 from api.app import get_monument
-from api.fire_storage import upload, process_image, deleteBlob
+from api.storage_api import upload, process_image, deleteBlob
 from database import Monuments, MonumentTranslations, MonumentImages, db
 
 admin = Blueprint('admin', __name__, url_prefix='/url_qr/admin')
@@ -202,11 +202,11 @@ def delete_monument(monument_id):
     if monument:
         images = MonumentImages.query.filter_by(monument_id=monument_id).all()
         for img in images:
-            if f'/{os.environ.get("BUCKET_NAME")}/' in img.image:
+            if img.image:
                 deleteBlob(img.image)
         translation = MonumentTranslations.query.filter_by(monument_id=monument_id).all()
         for desc in translation:
-            if desc.audio and f'/{os.environ.get("BUCKET_NAME")}/' in desc.audio:
+            if desc.audio:
                 deleteBlob(desc.audio)
 
         db.session.delete(monument)

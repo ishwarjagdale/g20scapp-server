@@ -6,7 +6,6 @@ from auth import auth, login_manager
 from api.admin import admin
 from api.app import api
 from flask_cors import CORS
-from api.fire_storage import initialize_app
 from share import share
 
 app = Flask(__name__)
@@ -17,8 +16,6 @@ with app.app_context():
     login_manager.init_app(app)
     db.init_app(app)
     db.create_all()
-
-    initialize_app()
 
 
 app.register_blueprint(auth)

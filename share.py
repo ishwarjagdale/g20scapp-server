@@ -1,6 +1,6 @@
 import os
 
-from flask import Blueprint
+from flask import Blueprint, current_app
 from database import Monuments, MonumentImages, MonumentTranslations
 
 share = Blueprint('share', __name__, url_prefix='/url_qr/share')
@@ -18,7 +18,7 @@ def share_monument(monument_id):
 
     if monument:
         title = monument.name
-        url = f"{os.environ.get('FRONT_END_URL')}/monument/{monument_id}"
+        url = f"{current_app.config.get('FRONT_END_URL')}/monument/{monument_id}"
         if images:
             image = images.image
         if desc:
@@ -35,7 +35,7 @@ def share_monument(monument_id):
         </head>
         <body>
             <script type='text/javascript'>
-                window.location.replace('{os.environ.get("FRONT_END_URL")}/monument/{monument_id}')
+                window.location.replace('{current_app.config.get("FRONT_END_URL")}/monument/{monument_id}')
             </script>
         </body>
     </html>
