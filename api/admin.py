@@ -144,6 +144,8 @@ def addLanguage(monument_id):
             except Exception as e:
                 print(e)
 
+            print(current_user.email_addr, "updated translation", payload['language'], "for", monument.monument_id)
+
             return jsonify({"message": f"{payload['language']} translation updated",
                             "translation": {
                                 "code": translation.language_code,
