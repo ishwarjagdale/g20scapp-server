@@ -170,7 +170,12 @@ def addLanguage(monument_id):
 
             print(current_user.email_addr, "added translation", payload['language'], "for", monument.monument_id)
 
-            return jsonify({"message": f"{payload['language']} translation added"}), 200
+            return jsonify({"message": f"{payload['language']} translation added", "translation": {
+                                "code": translation.language_code,
+                                "name": translation.name,
+                                "description": translation.description,
+                                "audio": translation.audio
+                            }}), 200
 
     if request.method == "DELETE":
         translation = MonumentTranslations.query.filter_by(monument_id=monument_id,
